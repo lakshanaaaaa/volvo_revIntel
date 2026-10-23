@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revenue Intelligence Inbox — SpendNest</title>
+<meta name="description" content="Sales manager workspace for reviewing call and meeting activity, routing conversations, and tracking follow-ups for 21 August 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg:         #080F1D;
+  --surface:    #0B1426;
+  --surface2:   #101C30;
+  --surface3:   #14233B;
+  --surface4:   #1B2D49;
+  --border:     #1E3050;
+  --border2:    #263854;
+  --text:       #F1F5FC;
+  --text2:      #A3B2C9;
+  --text3:      #73839E;
+  --accent:     #5B8CFF;
+  --accent2:    #4070E0;
+  --accent-dim: rgba(91,140,255,.12);
+  --green:      #35C995;
+  --green-dim:  rgba(53,201,149,.12);
+  --yellow:     #F5B84B;
+  --yellow-dim: rgba(245,184,75,.12);
+  --red:        #FF6B78;
+  --red-dim:    rgba(255,107,120,.12);
+  --orange:     #FF8C42;
+  --orange-dim: rgba(255,140,66,.12);
+  --purple:     #9B7EF8;
+  --purple-dim: rgba(155,126,248,.12);
+  --teal:       #2DD4BF;
+  --shadow-sm:  0 1px 4px rgba(0,0,0,.4);
+  --shadow:     0 4px 20px rgba(0,0,0,.5);
+  --shadow-lg:  0 12px 48px rgba(0,0,0,.7);
+  --radius:     10px;
+  --radius-sm:  6px;
+  --sidebar-w:  228px;
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.55;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── App Shell ──────────────────────────────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 20;
+  overflow: hidden;
+}
+.sidebar-brand {
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-mark {
+  width: 30px; height: 30px;
+  background: var(--accent2);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.brand-mark svg { width: 16px; height: 16px; }
+.brand-text { min-width: 0; }
+.brand-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--text); letter-spacing: -.2px;
+  white-space: nowrap;
+}
+.brand-sub {
+  font-size: 10.5px; color: var(--text3);
+  margin-top: 1px; white-space: nowrap;
+}
+
+.sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+.nav-group-label {
+  padding: 14px 20px 5px;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3);
+}
+.nav-item {
+  display: flex; align-items: center;
+  gap: 9px; padding: 8px 20px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 450;
+  color: var(--text3);
+  border-left: 2px solid transparent;
+  transition: color .15s, background .15s;
+  position: relative;
+  user-select: none;
+}
+.nav-item:hover { color: var(--text2); background: var(--surface2); }
+.nav-item.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+.nav-icon {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; opacity: .75;
+}
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-label { flex: 1; }
+.nav-badge {
+  font-size: 10px; font-weight: 600;
+  background: var(--accent2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 6px;
+  min-width: 18px; text-align: center;
+}
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text3);
+}
+.sidebar-footer-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+.status-dot.empty { background: var(--text3); }
+
+/* ─── Main Area ──────────────────────────────────────────────────────────── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ─── Topbar ─────────────────────────────────────────────────────────────── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 52px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.topbar-title {
+  font-size: 14px; font-weight: 600;
+  color: var(--text); flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topbar-date {
+  font-size: 11.5px; color: var(--text3);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.filter-select {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer; outline: none;
+  font-family: inherit;
+  max-width: 180px;
+}
+.filter-select:focus { border-color: var(--accent); }
+.import-btn {
+  background: var(--accent2);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 12.5px; font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .15s, transform .1s;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.import-btn:hover { background: var(--accent); transform: translateY(-1px); }
+.import-btn:active { transform: translateY(0); }
+
+/* ─── Content Area ───────────────────────────────────────────────────────── */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* ─── Cards ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.card-sm {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.card-title {
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .7px;
+  color: var(--text3); margin-bottom: 10px;
+}
+.card-value {
+  font-size: 26px; font-weight: 700;
+  color: var(--text); letter-spacing: -.5px; line-height: 1.1;
+}
+.card-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+/* ─── KPI Cards ──────────────────────────────────────────────────────────── */
+.kpi-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), transparent);
+  opacity: .5;
+}
+.kpi-label {
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .7px;
+  color: var(--text3); margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 24px; font-weight: 700;
+  color: var(--text); letter-spacing: -.4px; line-height: 1.1;
+}
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+/* ─── Grids ──────────────────────────────────────────────────────────────── */
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.grid-12 { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+
+/* ─── Tables ─────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead { position: sticky; top: 0; z-index: 1; }
+th {
+  text-align: left; padding: 9px 12px;
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .5px;
+  color: var(--text3);
+  background: var(--surface3);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(30,48,80,.6);
+  color: var(--text2); vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+.clickable-row { cursor: pointer; }
+.clickable-row:hover td { background: var(--surface4) !important; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* ─── Badges ─────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 500;
+  border-radius: 4px; padding: 2px 7px;
+  white-space: nowrap; letter-spacing: .1px;
+}
+.badge-green  { background: var(--green-dim);  color: var(--green); }
+.badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+.badge-red    { background: var(--red-dim);    color: var(--red); }
+.badge-blue   { background: var(--accent-dim); color: var(--accent); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
+.badge-orange { background: var(--orange-dim); color: var(--orange); }
+.badge-gray   { background: rgba(115,131,158,.12); color: var(--text3); }
+.badge-teal   { background: rgba(45,212,191,.12); color: var(--teal); }
+
+/* ─── Progress Bars ──────────────────────────────────────────────────────── */
+.progress {
+  height: 5px; background: var(--surface4);
+  border-radius: 3px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 3px;
+  transition: width .5s ease;
+}
+.progress-blue  { background: var(--accent); }
+.progress-green { background: var(--green); }
+
+/* ─── Bar Charts ─────────────────────────────────────────────────────────── */
+.bar-chart { display: flex; flex-direction: column; gap: 9px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label {
+  font-size: 11.5px; color: var(--text2);
+  width: 92px; flex-shrink: 0;
+  text-align: right; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.bar-track {
+  flex: 1; height: 7px;
+  background: var(--surface4);
+  border-radius: 4px; overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width .6s ease;
+}
+.bar-count { font-size: 11.5px; color: var(--text3); width: 28px; flex-shrink: 0; }
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 13px;
+  border-radius: var(--radius-sm); border: none;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .15s;
+  font-family: inherit;
+}
+.btn-primary { background: var(--accent2); color: #fff; }
+.btn-primary:hover { background: var(--accent); }
+.btn-secondary {
+  background: var(--surface3); color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-secondary:hover { background: var(--surface4); color: var(--text); }
+.btn-ghost {
+  background: transparent; color: var(--text3);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--surface3); color: var(--text2); }
+.btn-sm { padding: 4px 9px; font-size: 11px; border-radius: 4px; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─── Section Headers ────────────────────────────────────────────────────── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.section-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ─── Manager Brief Items ────────────────────────────────────────────────── */
+.brief-item {
+  padding: 11px 14px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-sm);
+  margin-bottom: 7px;
+  font-size: 12.5px; color: var(--text2); line-height: 1.6;
+}
+.brief-item.urgent    { border-left-color: var(--red); }
+.brief-item.important { border-left-color: var(--yellow); }
+.brief-item.positive  { border-left-color: var(--green); }
+.brief-item.info      { border-left-color: var(--accent); }
+.brief-item.clickable-row { cursor: pointer; }
+.brief-item.clickable-row:hover { background: var(--surface4); }
+
+/* ─── Tabs ───────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.tab {
+  padding: 9px 16px;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ─── Inbox Record List ──────────────────────────────────────────────────── */
+.record-item {
+  display: flex; align-items: flex-start;
+  gap: 11px; padding: 12px 14px;
+  border-bottom: 1px solid rgba(30,48,80,.5);
+  cursor: pointer; transition: background .12s;
+  border-left: 2px solid transparent;
+}
+.record-item:hover { background: var(--surface3); }
+.record-item.selected {
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+}
+.record-type-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 5px;
+}
+.record-type-dot.call    { background: var(--accent); }
+.record-type-dot.meeting { background: var(--green); }
+.record-info { flex: 1; min-width: 0; }
+.record-ref {
+  font-size: 10.5px; font-weight: 600;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .3px;
+}
+.record-title {
+  font-size: 12.5px; font-weight: 500;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.record-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.record-routes { margin-top: 5px; display: flex; gap: 4px; flex-wrap: wrap; }
+
+/* ─── Detail Panel ───────────────────────────────────────────────────────── */
+.detail-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.detail-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface3);
+}
+.detail-title { font-size: 14.5px; font-weight: 600; margin-bottom: 3px; }
+.detail-meta {
+  font-size: 11.5px; color: var(--text3);
+  display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px;
+}
+.detail-body { padding: 18px 20px; }
+.detail-section { margin-bottom: 18px; }
+.detail-section-title {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .7px;
+  color: var(--text3); margin-bottom: 8px;
+}
+
+/* ─── Analysis Blocks ────────────────────────────────────────────────────── */
+.analysis-block {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 15px; margin-bottom: 10px;
+}
+.analysis-label {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text3); margin-bottom: 5px;
+}
+.analysis-text { font-size: 12.5px; color: var(--text2); line-height: 1.65; }
+.evidence-block {
+  background: rgba(91,140,255,.06);
+  border: 1px solid rgba(91,140,255,.18);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px; margin-bottom: 10px;
+}
+
+/* ─── Transcript ─────────────────────────────────────────────────────────── */
+.transcript-wrap {
+  max-height: 420px; overflow-y: auto;
+  background: var(--surface3);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+.turn { margin-bottom: 13px; }
+.turn:last-child { margin-bottom: 0; }
+.turn-speaker {
+  font-size: 10.5px; font-weight: 700;
+  color: var(--accent); margin-bottom: 3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.turn-speaker.customer { color: var(--green); }
+.turn-speaker.supplier { color: var(--orange); }
+.turn-speaker.partner  { color: var(--purple); }
+.turn-time {
+  font-size: 9.5px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace; font-weight: 400;
+}
+.turn-text { font-size: 12px; color: var(--text2); line-height: 1.65; }
+
+/* ─── Route Tags ─────────────────────────────────────────────────────────── */
+.route-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--surface4); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 2px 8px;
+  font-size: 11px; color: var(--text2);
+}
+.route-tag.manual {
+  border-color: rgba(245,184,75,.35);
+  color: var(--yellow);
+  background: var(--yellow-dim);
+}
+
+/* ─── Notices ────────────────────────────────────────────────────────────── */
+.stale-notice {
+  background: var(--yellow-dim);
+  border: 1px solid rgba(245,184,75,.3);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px; color: var(--yellow);
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-bottom: 14px;
+}
+.stale-notice svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ─── Alerts ─────────────────────────────────────────────────────────────── */
+.alert {
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px; margin-bottom: 16px;
+  display: flex; gap: 8px; align-items: flex-start;
+  border: 1px solid;
+}
+.alert-info    { background: var(--accent-dim); border-color: rgba(91,140,255,.25); color: #8aabff; }
+.alert-warning { background: var(--yellow-dim); border-color: rgba(245,184,75,.25); color: var(--yellow); }
+.alert-success { background: var(--green-dim);  border-color: rgba(53,201,149,.25); color: var(--green); }
+
+/* ─── Source Chips ───────────────────────────────────────────────────────── */
+.source-chip {
+  font-size: 10px; font-family: 'JetBrains Mono', monospace;
+  background: var(--surface4); color: var(--text3);
+  border-radius: 3px; padding: 1px 6px;
+  border: 1px solid var(--border);
+}
+
+/* ─── Modals ─────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,8,16,.82);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 26px 28px;
+  width: 500px; max-width: 95vw; max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.modal-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text); margin-bottom: 5px;
+}
+.modal-desc {
+  font-size: 12.5px; color: var(--text3);
+  margin-bottom: 18px; line-height: 1.6;
+}
+.modal-actions {
+  display: flex; gap: 8px;
+  justify-content: flex-end; margin-top: 18px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+/* keep .modal h2 / .modal p working for existing app.js references */
+.modal h2 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.modal p  { font-size: 12.5px; color: var(--text3); margin-bottom: 16px; line-height: 1.6; }
+
+/* ─── Drop Zone ──────────────────────────────────────────────────────────── */
+.drop-zone {
+  border: 1.5px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 28px 24px; text-align: center;
+  cursor: pointer; transition: all .2s; color: var(--text3);
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--text2);
+}
+.drop-zone .drop-icon { font-size: 28px; margin-bottom: 7px; }
+.drop-zone p { font-size: 12.5px; margin: 0; }
+.file-input { display: none; }
+
+/* ─── Toast ──────────────────────────────────────────────────────────────── */
+.toast-container {
+  position: fixed; bottom: 20px; right: 20px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font-size: 12.5px; color: var(--text);
+  display: flex; align-items: center; gap: 9px;
+  box-shadow: var(--shadow);
+  animation: toastIn .25s ease;
+  min-width: 260px; max-width: 380px;
+  pointer-events: all;
+  transition: opacity .25s, transform .25s;
+}
+.toast.success { border-color: rgba(53,201,149,.4); }
+.toast.error   { border-color: rgba(255,107,120,.4); }
+.toast.warning { border-color: rgba(245,184,75,.4);  }
+@keyframes toastIn {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ─── Empty State ────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 56px 20px; color: var(--text3);
+}
+.empty-state .icon { font-size: 40px; margin-bottom: 10px; opacity: .4; }
+.empty-state h3 { font-size: 14px; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
+.empty-state p  { font-size: 12px; }
+
+/* ─── Export Files ───────────────────────────────────────────────────────── */
+.export-file {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 7px;
+}
+.export-file .file-icon { font-size: 18px; }
+.export-file .file-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.export-file .file-meta { font-size: 11px; color: var(--text3); }
+.export-file .download-btn { margin-left: auto; }
+
+/* ─── Forms ──────────────────────────────────────────────────────────────── */
+input[type=text], textarea, select {
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  color: var(--text); border-radius: var(--radius-sm);
+  padding: 7px 11px;
+  font-size: 12.5px; font-family: 'Inter', sans-serif;
+  outline: none; width: 100%;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(91,140,255,.15);
+}
+textarea { resize: vertical; min-height: 80px; }
+label { font-size: 11.5px; color: var(--text3); display: block; margin-bottom: 5px; }
+input[type=checkbox] { accent-color: var(--accent); width: auto; }
+
+/* ─── Views ──────────────────────────────────────────────────────────────── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 1024px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-12 { grid-template-columns: 260px 1fr; }
+}
+@media (max-width: 900px) {
+  :root { --sidebar-w: 52px; }
+  .sidebar-brand .brand-text,
+  .nav-group-label, .nav-label,
+  .sidebar-footer { display: none; }
+  .nav-item { padding: 10px; justify-content: center; }
+  .nav-icon { width: 22px; height: 22px; }
+  .brand-mark { margin: 0 auto; }
+}
+@media (max-width: 700px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .grid-12 { grid-template-columns: 1fr; }
+  .content { padding: 14px; }
+  .topbar { padding: 0 14px; gap: 8px; }
+  .topbar-date { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Toast Container ──────────────────────────────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ─── Import Modal ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="importModal" style="display:none">
+  <div class="modal">
+    <h2>Import Batch</h2>
+    <p>Use quick-load buttons or drop a JSON file. Identity: (source_type, source_id). Same or older revisions ignored. Manual routes survive re-imports.</p>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="quickLoad('initial')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Load Initial Batch (01)
+      </button>
+      <button class="btn btn-secondary" onclick="quickLoad('update')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Load Update Batch (02)
+      </button>
+    </div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="drop-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <p>Click or drag &amp; drop a JSON file</p>
+      <p style="font-size:11px;margin-top:4px;opacity:.6">Supports 01_initial.json and 02_update.json</p>
+    </div>
+    <input type="file" id="fileInput" class="file-input" accept=".json">
+    <div id="importLog" style="display:none;margin-top:12px;max-height:160px;overflow-y:auto;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:10px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('importModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Route Modal ───────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="routeModal" style="display:none">
+  <div class="modal">
+    <h2>Edit Route</h2>
+    <p>Manual corrections persist through re-imports, updates, and browser restarts. Flagged in the export manifest.</p>
+    <div id="routeModalContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('routeModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRouteCorrection()">Save Correction</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Analysis Modal ────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="analysisModal" style="display:none">
+  <div class="modal">
+    <h2>Update Analysis</h2>
+    <p>The transcript was updated in a later batch. Enter revised analysis to clear the stale flag.</p>
+    <div id="analysisModalContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('analysisModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAnalysisUpdate()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── App Shell ─────────────────────────────────────────────────────────── -->
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">RevIntel</div>
+        <div class="brand-sub">SpendNest · 21 Aug 2026</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Overview</div>
+
+      <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard" role="button" tabindex="0" aria-label="Dashboard">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+
+      <div class="nav-item" onclick="showView('brief')" id="nav-brief" role="button" tabindex="0" aria-label="Manager Brief">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </span>
+        <span class="nav-label">Manager Brief</span>
+      </div>
+
+      <div class="nav-group-label">Conversations</div>
+
+      <div class="nav-item" onclick="showView('inbox')" id="nav-inbox" role="button" tabindex="0" aria-label="Inbox">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+          </svg>
+        </span>
+        <span class="nav-label">Inbox</span>
+        <span class="nav-badge" id="badge-needs-review" style="display:none">0</span>
+      </div>
+
+      <div class="nav-item" onclick="showView('calls')" id="nav-calls" role="button" tabindex="0" aria-label="Calls">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </span>
+        <span class="nav-label">Calls</span>
+      </div>
+
+      <div class="nav-item" onclick="showView('meetings')" id="nav-meetings" role="button" tabindex="0" aria-label="Meetings">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </span>
+        <span class="nav-label">Meetings</span>
+      </div>
+
+      <div class="nav-group-label">Routing</div>
+
+      <div class="nav-item" onclick="showView('routing')" id="nav-routing" role="button" tabindex="0" aria-label="Routes">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+            <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+          </svg>
+        </span>
+        <span class="nav-label">Routes</span>
+      </div>
+
+      <div class="nav-group-label">Data</div>
+
+      <div class="nav-item" onclick="showView('exports')" id="nav-exports" role="button" tabindex="0" aria-label="Exports">
+        <span class="nav-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </span>
+        <span class="nav-label">Exports</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-status">
+        <div class="status-dot empty" id="status-dot"></div>
+        <span id="import-status">No data loaded</span>
+      </div>
+      <div style="font-size:10.5px;margin-bottom:8px">Rev Intelligence Inbox v1</div>
+      <button class="btn btn-ghost btn-sm" style="width:100%" onclick="resetState()">Reset Data</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-date">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        21 Aug 2026 · Asia/Kolkata
+      </div>
+      <select class="filter-select" id="personFilter" onchange="applyFilter()" aria-label="Filter by rep or organiser">
+        <option value="">All reps / organisers</option>
+      </select>
+      <button class="import-btn" onclick="openModal('importModal')" aria-label="Import batch data">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import
+      </button>
+    </div>
+
+    <!-- Content Views -->
+    <div class="content">
+
+      <!-- ══ DASHBOARD ══════════════════════════════════════════════════════ -->
+      <div class="view active" id="view-dashboard">
+
+        <!-- KPI Cards -->
+        <div class="grid-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Selected Records</div>
+            <div class="kpi-value" id="stat-total">—</div>
+            <div class="kpi-sub">44 expected after both batches</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Transcript Coverage</div>
+            <div class="kpi-value" id="stat-coverage">—</div>
+            <div class="kpi-sub" id="stat-coverage-sub">of loaded records</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Connect Rate</div>
+            <div class="kpi-value" id="stat-connect">—</div>
+            <div class="kpi-sub" id="stat-connect-sub">source-reported · calls only</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Routed &amp; Analysed</div>
+            <div class="kpi-value" id="stat-routed">—</div>
+            <div class="kpi-sub" id="stat-routed-sub">of analysable records</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">Activity by Rep / Organiser</div>
+            <div class="bar-chart" id="person-chart"></div>
+            <div class="card-sub" style="margin-top:10px">Selected records only — not a full-team view.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Outcome Distribution (calls)</div>
+            <div id="outcome-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Route Summary</div>
+            <div id="route-summary-chart"></div>
+            <div class="card-sub" style="margin-top:10px">Multi-route records counted once per route.</div>
+          </div>
+        </div>
+
+        <!-- Needs Attention + Coverage -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <div class="section-title">Needs Attention</div>
+                <div class="section-sub">Flagged items requiring manager action</div>
+              </div>
+            </div>
+            <div id="needs-attention-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-header">
+              <div>
+                <div class="section-title">Coverage by Type</div>
+                <div class="section-sub">Usable transcripts by source type</div>
+              </div>
+            </div>
+            <div id="coverage-breakdown"></div>
+          </div>
+        </div>
+
+        <!-- Quick Scan Table -->
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">All Records — Quick Scan</div>
+              <div class="section-sub" id="quick-scan-sub">Click any row to inspect in Inbox</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th><th>Type</th><th>Rep / Organiser</th>
+                  <th>Time IST</th><th>Duration</th><th>Transcript</th>
+                  <th>Outcome / Status</th><th>Routes</th><th>State</th>
+                </tr>
+              </thead>
+              <tbody id="all-records-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /dashboard -->
+
+      <!-- ══ MANAGER BRIEF ══════════════════════════════════════════════════ -->
+      <div class="view" id="view-brief">
+        <div class="alert alert-info" style="margin-bottom:20px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Manager brief · <strong>21 August 2026 (Asia/Kolkata)</strong> · Pre-generated after applying both batches — 18 conversations analysed. Fixed-date view.</span>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="section-title" style="margin-bottom:14px">Activity Summary</div>
+              <div id="brief-activity"></div>
+            </div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="section-title" style="margin-bottom:14px">Priority Conversations</div>
+              <div id="brief-priority"></div>
+            </div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="section-title" style="margin-bottom:14px">Sales Coaching Observations</div>
+              <div id="brief-coaching"></div>
+            </div>
+            <div class="card">
+              <div class="section-title" style="margin-bottom:14px">Follow-up Priorities</div>
+              <div id="brief-followup"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="section-title" style="margin-bottom:12px">Exceptions &amp; Telemetry</div>
+              <div id="brief-exceptions"></div>
+            </div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="section-title" style="margin-bottom:12px">Partner / Vendor</div>
+              <div id="brief-partner"></div>
+            </div>
+            <div class="card">
+              <div class="section-title" style="margin-bottom:12px">Active CS Issues</div>
+              <div id="brief-cs"></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /brief -->
+
+      <!-- ══ INBOX ══════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-inbox">
+        <div class="tabs">
+          <div class="tab active" onclick="setInboxTab('all')"          id="inbox-tab-all">All (0)</div>
+          <div class="tab"        onclick="setInboxTab('needs-review')" id="inbox-tab-needs-review">Needs Review (0)</div>
+          <div class="tab"        onclick="setInboxTab('analysable')"   id="inbox-tab-analysable">Analysable (0)</div>
+          <div class="tab"        onclick="setInboxTab('background')"   id="inbox-tab-background">Background (0)</div>
+        </div>
+        <div class="grid-12" style="align-items:stretch">
+          <!-- List panel -->
+          <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+            <div style="padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0">
+              <input type="text" id="search-box" placeholder="Search ref, title, rep…" style="font-size:12px;padding:6px 10px" oninput="filterInbox()" aria-label="Search conversations">
+            </div>
+            <div id="inbox-list" style="flex:1;overflow-y:auto;min-height:0;max-height:calc(100vh - 220px)"></div>
+          </div>
+          <!-- Detail panel -->
+          <div id="inbox-detail">
+            <div class="empty-state">
+              <div class="icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <h3>Select a conversation</h3>
+              <p>Choose a record from the list to inspect its transcript and analysis</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /inbox -->
+
+      <!-- ══ CALLS ══════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-calls">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Call Records</div>
+              <div class="section-sub">30 selected calls · 21 Aug 2026 IST</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th><th>Rep</th><th>Direction</th><th>Time IST</th>
+                  <th>Duration</th><th>Connected</th><th>Conversation</th>
+                  <th>Outcome</th><th>Transcript</th><th>Routes</th><th>View</th>
+                </tr>
+              </thead>
+              <tbody id="calls-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /calls -->
+
+      <!-- ══ MEETINGS ════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-meetings">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Meeting Records</div>
+              <div class="section-sub">14 selected meetings · 21 Aug 2026 IST</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th><th>Title</th><th>Organiser</th><th>Start IST</th>
+                  <th>Duration</th><th>Recording</th><th>Transcript</th>
+                  <th>Turns</th><th>Routes</th><th>View</th>
+                </tr>
+              </thead>
+              <tbody id="meetings-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /meetings -->
+
+      <!-- ══ ROUTING ════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-routing">
+        <div class="alert alert-info" style="margin-bottom:16px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span><strong>Taxonomy:</strong> Sales Coaching · Deal Follow-up · Customer Follow-up · CS/Support · Partner/Vendor · Internal · Background · Needs Review. Multi-route allowed. Manual corrections persist.</span>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Route Assignments</div>
+              <div class="section-sub">All 44 records · click Edit to correct any assignment</div>
+            </div>
+            <button class="btn btn-secondary" onclick="showView('exports')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th><th>Type</th><th>Title / Rep</th>
+                  <th>Routes</th><th>Override</th><th>State</th><th>Rev</th><th>Edit</th>
+                </tr>
+              </thead>
+              <tbody id="routing-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title" style="margin-bottom:14px">Difficult Routing Decisions</div>
+          <div id="difficult-cases"></div>
+        </div>
+      </div><!-- /routing -->
+
+      <!-- ══ EXPORTS ════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-exports">
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="section-title" style="margin-bottom:10px">Export Package</div>
+            <p style="font-size:12.5px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+              Generate a manifest for the current state. Repeat export replaces prior outputs — no duplicate proliferation. Outputs in JSON and CSV.
+            </p>
+            <button class="btn btn-primary" onclick="generateExport()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Generate Export
+            </button>
+            <div id="export-status" style="margin-top:10px;font-size:11.5px;color:var(--text3)"></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="margin-bottom:10px">Manifest Schema</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text3);background:var(--surface3);border-radius:6px;padding:12px;border:1px solid var(--border);line-height:1.8">
+              source_type, source_id, record_ref,<br>
+              applied_revision, routes[], output_paths[],<br>
+              processing_state, manual_override,<br>
+              analysis_fresh, analysis_source, exported_at
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-title" style="margin-bottom:4px">Export Folder Structure</div>
+          <div class="card-sub" style="margin-bottom:14px">Organised by route. Daily summaries may span multiple records.</div>
+          <div id="export-tree" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text2);background:var(--surface3);border-radius:6px;padding:14px;border:1px solid var(--border);white-space:pre;max-height:280px;overflow-y:auto;line-height:1.6"></div>
+        </div>
+        <div class="card">
+          <div class="section-title" style="margin-bottom:12px">Generated Files</div>
+          <div id="export-files"></div>
+        </div>
+      </div><!-- /exports -->
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /app -->
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
