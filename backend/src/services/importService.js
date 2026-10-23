@@ -1,4 +1,5 @@
 import ConversationRecord from '../models/ConversationRecord.js';
+import ImportLog from '../models/ImportLog.js';
 import { PRE_ANALYSIS, getDefaultRoutes, hasUsableTranscript } from '../data/preAnalysis.js';
 
 /**
@@ -114,6 +115,21 @@ export async function processBatch(batch) {
   }
 
   const totalNow = await ConversationRecord.countDocuments();
+
+  // Persist import log entry
+  try {
+    await ImportLog.create({
+      batch_id: batchId,
+      revision: batchRevision,
+      added,
+      updated,
+      ignored,
+      total_records: totalNow,
+      details
+    });
+  } catch (e) {
+    console.warn('ImportLog save failed (non-fatal):', e.message);
+  }
 
   return {
     batch_id: batchId,
